@@ -140,6 +140,14 @@ services:
       - plane-mq
     ports:
       - "8000:8000"
+    environment:
+      - DEBUG=1
+      - ALLOWED_HOSTS=*
+      - CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:10000
+      - CSRF_TRUSTED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:10000
+      - ENABLE_DRF_SPECTACULAR=true
+      - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      - ENABLE_SMTP=True
 
   worker:
     build:
@@ -159,6 +167,9 @@ services:
       - api
       - plane-db
       - plane-redis
+    environment:
+      - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      - ENABLE_SMTP=True
 
   beat-worker:
     build:
