@@ -57,6 +57,13 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const isOAuthEnabled =
     (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
 
+  const isEmailDisabled =
+    !!invitation_id &&
+    !!emailParam &&
+    email === emailParam &&
+    !!workspaceSlug;
+
+
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
   }, [currentAuthMode, authMode]);
@@ -169,6 +176,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           setAuthStep={(authStep) => setAuthStep(authStep)}
           setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
           currentAuthMode={currentAuthMode}
+          isEmailDisabled={isEmailDisabled}
         />
         <TermsAndConditions authType={authMode} />
       </div>

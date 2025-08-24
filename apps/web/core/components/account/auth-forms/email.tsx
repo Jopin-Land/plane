@@ -71,8 +71,9 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             autoComplete="on"
             autoFocus
             ref={inputRef}
+            disabled={defaultEmail}
           />
-          {email.length > 0 && (
+          {email.length > 0 && !defaultEmail && (
             <button
               type="button"
               onClick={() => {

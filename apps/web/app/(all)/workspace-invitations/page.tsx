@@ -58,19 +58,6 @@ const WorkspaceInvitationPage = observer(() => {
       .catch((err) => console.error(err));
   };
 
-  const handleReject = () => {
-    if (!invitationDetail) return;
-    workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
-        accepted: false,
-        email: invitationDetail.email,
-      })
-      .then(() => {
-        router.push("/");
-      })
-      .catch((err) => console.error(err));
-  };
-
   return (
     <AuthenticationWrapper pageType={EPageTypes.PUBLIC}>
       <div className="flex h-full w-full flex-col items-center justify-center px-3">
@@ -85,7 +72,6 @@ const WorkspaceInvitationPage = observer(() => {
               description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
               <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />
-              <EmptySpaceItem Icon={X} title="Ignore" action={handleReject} />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (
