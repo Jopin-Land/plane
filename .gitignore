@@ -97,3 +97,6 @@ dev-editor
 # Redis
 *.rdb
 *.rdb.gz
+
+#custom
+*.bundled_*.mjs
