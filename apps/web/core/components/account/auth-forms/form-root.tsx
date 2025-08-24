@@ -26,12 +26,13 @@ type TAuthFormRoot = {
   setAuthStep: (authStep: EAuthSteps) => void;
   setErrorInfo: (errorInfo: TAuthErrorInfo | undefined) => void;
   currentAuthMode: EAuthModes;
+  isEmailDisabled: boolean;
 };
 
 const authService = new AuthService();
 
 export const AuthFormRoot = observer((props: TAuthFormRoot) => {
-  const { authStep, authMode, email, setEmail, setAuthMode, setAuthStep, setErrorInfo, currentAuthMode } = props;
+  const { authStep, authMode, email, setEmail, setAuthMode, setAuthStep, setErrorInfo, currentAuthMode, isEmailDisabled } = props;
   // router
   const router = useAppRouter();
   // query params
@@ -44,7 +45,7 @@ export const AuthFormRoot = observer((props: TAuthFormRoot) => {
 
   const isSMTPConfigured = config?.is_smtp_configured || false;
 
-  // submit handler- email verification
+  // submit handler-email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
     setErrorInfo(undefined);
@@ -125,6 +126,7 @@ export const AuthFormRoot = observer((props: TAuthFormRoot) => {
           setAuthStep(step);
         }}
         nextPath={nextPath || undefined}
+        isEmailDisabled={isEmailDisabled}
       />
     );
   }

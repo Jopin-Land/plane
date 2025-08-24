@@ -27,6 +27,7 @@ type Props = {
   handleEmailClear: () => void;
   handleAuthStep: (step: EAuthSteps) => void;
   nextPath: string | undefined;
+  isEmailDisabled: boolean
 };
 
 type TPasswordFormValues = {
@@ -43,7 +44,7 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
-  const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode, nextPath } = props;
+  const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode, nextPath, isEmailDisabled  } = props;
   // plane imports
   const { t } = useTranslation();
   // ref
@@ -198,7 +199,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
               disabled
             />
-            {passwordFormData.email.length > 0 && (
+            {passwordFormData.email.length > 0 && !isEmailDisabled && (
               <button
                 type="button"
                 className="absolute right-3 size-5"
