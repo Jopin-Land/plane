@@ -99,4 +99,5 @@ dev-editor
 *.rdb.gz
 
 #custom
-*.bundled_*.mjs
+packages/**/tsup.config.bundled_*.mjs
+
