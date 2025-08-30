@@ -400,6 +400,9 @@ def webhook_activity(
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
 
+        if event == "user":
+            webhooks = webhooks.filter(user=True)
+
         for webhook in webhooks:
             webhook_send_task.delay(
                 webhook_id=webhook.id,
