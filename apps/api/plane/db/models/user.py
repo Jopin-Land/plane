@@ -17,11 +17,6 @@ from plane.db.models import FileAsset
 from ..mixins import TimeAuditModel
 from plane.utils.color import get_random_color
 
-from django.conf import settings
-from plane.bgtasks.webhook_task import webhook_activity
-from plane.db.models import Workspace
-
-
 def get_default_onboarding():
     return {
         "profile_complete": False,
@@ -286,38 +281,3 @@ def create_user_notification(sender, instance, created, **kwargs):
             mention=True,
             issue_completed=True,
         )
-
-@receiver(post_save, sender=User)
-def emit_user_created_webhook(sender, instance: User, created, **kwargs):
-    """
-    Gửi webhook 'user.created' ngay sau khi User được tạo.
-    - Tìm slug workspace nếu có (từ invitation/membership hoặc last_workspace_id của Profile).
-    - Nếu chưa gắn workspace thì vẫn phát event với slug = None (server nhận có thể không cần slug).
-    """
-    if not created or instance.is_bot:
-        return
-
-    # 1) Tìm slug workspace nếu có:
-    slug = None
-
-    # a) Nếu Profile đã có last_workspace_id
-    try:
-        if getattr(instance, "profile", None) and instance.profile.last_workspace_id:
-            ws = Workspace.objects.filter(id=instance.profile.last_workspace_id).only("slug").first()
-            if ws: slug = ws.slug
-    except Exception:
-        pass
-
-    webhook_activity.delay(
-        event="user",
-        verb="created",
-        field=None,
-        old_value=None,
-        new_value=None,
-        actor_id=str(instance.id),
-        slug=slug,
-        current_site=getattr(settings, "SITE_URL", ""),
-        event_id=str(instance.id),
-        old_identifier=None,
-        new_identifier=None,
-    )
