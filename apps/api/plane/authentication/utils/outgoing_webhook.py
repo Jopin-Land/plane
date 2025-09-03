@@ -1,7 +1,6 @@
 import json, time, uuid, hmac, hashlib, logging, requests
 from django.conf import settings
 
-# log = logging.getLogger(__name__)
 log = logging.getLogger("plane.api.request")
 
 def _signature(ts: str, body: bytes, secret: str) -> str:
@@ -16,7 +15,6 @@ def send_user_created_event(payload: dict) -> None:
     eps = _endpoints()
     if not eps:
         return
-    print("-----------------------------------------> send_user_created_event", eps)
 
     secret  = getattr(settings, "CUSTOM_USER_WEBHOOK_SECRET", "")
     timeout = getattr(settings, "CUSTOM_USER_WEBHOOK_TIMEOUT", 4)
@@ -34,11 +32,7 @@ def send_user_created_event(payload: dict) -> None:
         "X-Idempotency-Key": str(uuid.uuid4()),
     }
 
-    print("---------------------> headers:", headers)
-    print("---------------------> body:", body)
-
     for url in eps:
-        print("-----------------> url",url)
         try:
             r = requests.post(url, data=body, headers=headers, timeout=timeout)
             log.info(
