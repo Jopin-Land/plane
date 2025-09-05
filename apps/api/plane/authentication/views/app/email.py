@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.views import View
+from django.conf import settings
 
 # Module imports
 from plane.authentication.provider.credentials.email import EmailProvider
@@ -20,6 +21,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.path_validator import validate_next_path
+from plane.authentication.utils.outgoing_webhook import send_user_created_event
 
 
 class SignInAuthEndpoint(View):
@@ -215,6 +217,24 @@ class SignUpAuthEndpoint(View):
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
+            payload = {
+                "event": "user.created",
+                "user": {
+                    "id": str(user.id),
+                    "email": getattr(user, "email", None),
+                    "name": getattr(user, "name", None) or getattr(user, "first_name", "") or "",
+                    "created_at": user.date_joined.isoformat() if hasattr(user, "date_joined") else None,
+                },
+                "context": {
+                    "ip": request.META.get("REMOTE_ADDR"),
+                    "ua": request.META.get("HTTP_USER_AGENT"),
+                    "ref": request.META.get("HTTP_REFERER"),
+                },
+            }
+            try:
+                send_user_created_event(payload)
+            except Exception:
+                import logging; logging.getLogger(__name__).exception("user.created webhook failed")
             # Get the redirection path
             if next_path:
                 path = str(validate_next_path(next_path))

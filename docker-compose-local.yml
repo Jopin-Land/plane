@@ -148,6 +148,8 @@ services:
       - ENABLE_DRF_SPECTACULAR=true
       - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
       - ENABLE_SMTP=True
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   worker:
     build:
